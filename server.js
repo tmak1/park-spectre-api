@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const express = require('express')
 const axios = require('axios')
 const cors = require('cors')
@@ -5,7 +6,7 @@ const app = express()
 const SSEChannel = require('sse-pubsub')
 const port = 4567
 const pg = require('pg');
-const pool = new pg.Pool({ database: 'parkdev1' }); // connect to the database
+const pool = new pg.Pool({ database: 'parkdev1', password: '1234' }); // connect to the database
 const bodyParser = require('body-parser');
 
 app.use(cors())
@@ -14,7 +15,7 @@ const channel = new SSEChannel();
 
     setInterval(() => {
         getAllBays();
-    }, (40000))
+    }, (6000))
 
 // SSE stream path
 // app.get('/stream', (req, res) => {
@@ -65,7 +66,9 @@ var getAllBays = () => {
                 sql = `SELECT * FROM bay_restrictions r, bay_sensors s WHERE s.bay_id = r.bayid ORDER BY s.bay_id;`
                 pool.query(sql, []).then(sqlresults => { 
                     // res.json(sqlresults.rows);
-                    channel.publish( sqlresults.rows, 'myEvent')
+                    var shortened = _.sortedUniqBy(sqlresults.rows, 'bayid')
+
+                    channel.publish( shortened, 'myEvent')
                 })  
             })              
         })       
