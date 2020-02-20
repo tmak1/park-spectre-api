@@ -16,7 +16,7 @@ setInterval(() => {
             const receipts = []; 
             apiresults.data.forEach(result => receipts.push(Sensor.create(result)));
             Promise.all(receipts).then(() => {
-                InfoSensor.all().then(sqlresults => channel.publish( sqlresults.rows, 'myEvent'))  
+                InfoSensor.all().then(sqlresults => channel.publish( sqlresults.rows, 'broadcast'))  
             })              
         })       
     })
@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
     InfoSensor.all().then(sqlresults => res.json(sqlresults.rows))
 })
 
-router.get('/stream', (req, res) => {
+router.get('/broadcast', (req, res) => {
     // console.log('connected');
     channel.subscribe(req, res);
 })
