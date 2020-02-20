@@ -12,20 +12,7 @@ app.use(cors())
 
 const channel = new SSEChannel();
 
-var data = "Hello everyone";
-
-// Say hello every second
-// setInterval(() => channel.publish( data, 'myEvent'), 5000);
-
-// app.get('/stream', (req, res) => channel.subscribe(req, res));
-
-// client side code :
-// const es = new EventSource("http://localhost:4567/sensors");
-// es.addEventListener('myEvent', ev => {
-// 	console.log(ev.data);
-// });
-
-
+// SSE stream path
 app.get('/stream', (req, res) => {
     setInterval(() => {
         axios({ 
