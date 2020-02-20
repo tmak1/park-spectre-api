@@ -12,6 +12,10 @@ app.use(cors())
 
 const channel = new SSEChannel();
 
+    setInterval(() => {
+        getAllBays();
+    }, (40000))
+
 // SSE stream path
 // app.get('/stream', (req, res) => {
 //     setInterval(() => {
@@ -32,45 +36,54 @@ const channel = new SSEChannel();
 // // count 2099
 // })
 
+var getAllBays = () => {
+    console.log('sdfsdf')
+    axios({ 
+        url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
+        method: 'get', 
+        params: { 
+            "$limit" : 500000,
+            "$$app_token" : "EVwS20Pb4HCatJGD3xccSiwbj" 
+        }
+    }).then(results => {
+        sql = `DELETE FROM bay_sensors;`
+        pool.query(sql, []).then(() => { 
+            results.data.forEach(result => {
+                receipts = []; 
+                sql = `INSERT INTO bay_sensors (bay_id, st_marker_id, status, lat, lon) VALUES ($1, $2, $3, $4, $5) RETURNING *;` // the RETURNING syntax shows the row that was inserted or deleted 
+                receipts.push(pool.query(sql, [
+                    result.bay_id,
+                    result.st_marker_id,
+                    result.status,
+                    result.lat,
+                    result.lon
+                ]))
+                // .then(sqlresults => { 
+                //     console.log(sqlresults.rows[0].bay_id);
+                // })
+            });
+            Promise.all(receipts).then(() => {
+                sql = `SELECT * FROM bay_restrictions r, bay_sensors s WHERE s.bay_id = r.bayid ORDER BY s.bay_id;`
+                pool.query(sql, []).then(sqlresults => { 
+                    // res.json(sqlresults.rows);
+                    channel.publish( sqlresults.rows, 'myEvent')
+                })  
+            })              
+        })       
+    })
+}
 
 app.get('/stream', (req, res) => {
-    setInterval(() => {
-        axios({ 
-            url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
-            method: 'get', 
-            params: { 
-                "$limit" : 500000,
-                "$$app_token" : "EVwS20Pb4HCatJGD3xccSiwbj" 
-            }
-        }).then(results => {
-            sql = `DELETE FROM bay_sensors;`
-            pool.query(sql, []).then(() => { 
-                results.data.forEach(result => {
-                    receipts = []; 
-                    sql = `INSERT INTO bay_sensors (bay_id, st_marker_id, status, lat, lon) VALUES ($1, $2, $3, $4, $5) RETURNING *;` // the RETURNING syntax shows the row that was inserted or deleted 
-                    receipts.push(pool.query(sql, [
-                        result.bay_id,
-                        result.st_marker_id,
-                        result.status,
-                        result.lat,
-                        result.lon
-                    ]))
-                    // .then(sqlresults => { 
-                    //     console.log(sqlresults.rows[0].bay_id);
-                    // })
-                });
-                Promise.all(receipts).then(() => {
-                    sql = `SELECT * FROM bay_restrictions r, bay_sensors s WHERE s.bay_id = r.bayid ORDER BY s.bay_id;`
-                    pool.query(sql, []).then(sqlresults => { 
-                        // res.json(sqlresults.rows);
-                        channel.publish( sqlresults.rows, 'myEvent')
-                    })  
-                })              
-            })       
-        })
-    }, (120 * 1000))
+    console.log('connected');
     channel.subscribe(req, res);
 // count 2099
+})
+
+app.get('/usemap', (req, res) => {
+    sql = `SELECT * FROM bay_restrictions r, bay_sensors s WHERE s.bay_id = r.bayid ORDER BY s.bay_id;`
+    pool.query(sql, []).then(sqlresults => { 
+        res.json(sqlresults.rows);
+    })
 })
 
 
@@ -258,43 +271,43 @@ app.get('/logtodb/info', (req, res) => {
 //     })
 // })
 
-app.get('/usemap', (req, res) => {
-    axios({ 
-        url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
-        method: 'get', 
-        params: {
-            "$limit": 500000,
-            "$select": "bay_id, status", 
-            "$order": "bay_id",
-            "$$app_token": "EVwS20Pb4HCatJGD3xccSiwbj" 
-        }
-    }).then(results => {          
-        results.data.forEach(newBays => {
+// app.get('/usemap', (req, res) => {
+//     axios({ 
+//         url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
+//         method: 'get', 
+//         params: {
+//             "$limit": 500000,
+//             "$select": "bay_id, status", 
+//             "$order": "bay_id",
+//             "$$app_token": "EVwS20Pb4HCatJGD3xccSiwbj" 
+//         }
+//     }).then(results => {          
+//         results.data.forEach(newBays => {
 
-            sql = `SELECT updated_at FROM bay_sensors WHERE bay_id = $1;`;
-            pool.query(sql, [newBays.bay_id]).then(times => { 
-                last_updated = new Date(times.rows[0].updated_at + 'Z');
-                currentTime = new Date();
-                console.log('current: \n' + currentTime + '\nlast:\n' + last_updated);
-            })
+//             sql = `SELECT updated_at FROM bay_sensors WHERE bay_id = $1;`;
+//             pool.query(sql, [newBays.bay_id]).then(times => { 
+//                 last_updated = new Date(times.rows[0].updated_at + 'Z');
+//                 currentTime = new Date();
+//                 console.log('current: \n' + currentTime + '\nlast:\n' + last_updated);
+//             })
 
-            // sql = `UPDATE bay_sensors SET status = $1 WHERE bay_id = $2;`;
-            // pool.query(sql, ["nothing!!", newBays.bay_id]).then(results => { 
-            //     //res.json(results.rows);     
-            // })
+//             // sql = `UPDATE bay_sensors SET status = $1 WHERE bay_id = $2;`;
+//             // pool.query(sql, ["nothing!!", newBays.bay_id]).then(results => { 
+//             //     //res.json(results.rows);     
+//             // })
 
-        })
-        sql = `SELECT * FROM bay_restrictions r, bay_sensors s WHERE s.bay_id = r.bayid ORDER BY s.bay_id;`
-        pool.query(sql, []).then(sqlresults => { 
-            res.json(sqlresults.rows);
-            // mainMap(results.rows);
-        })
-    })
-})
+//         })
+//         sql = `SELECT * FROM bay_restrictions r, bay_sensors s WHERE s.bay_id = r.bayid ORDER BY s.bay_id;`
+//         pool.query(sql, []).then(sqlresults => { 
+//             res.json(sqlresults.rows);
+//             // mainMap(results.rows);
+//         })
+//     })
+// })
 
-app.get('/nothing', (req, res) => {
- console.log('im here');
-})
+// app.get('/nothing', (req, res) => {
+//  console.log('im here');
+// })
 
 
 app.listen(port, () => console.log(`running on ${port}`))
