@@ -1,12 +1,12 @@
 const db = require('../db/db')
 
 function all() {
-    sql = `SELECT * FROM bay_info;`
+    const sql = `SELECT * FROM bay_info;`
     return db.query(sql, [])  
 }
 
 function create(params) {
-    sql = `INSERT INTO bay_info (bayid, deviceid,`
+    let sql = `INSERT INTO bay_info (bayid, deviceid,`
     sql += ` description1, description2, description3, description4, description5, description6,`
     sql += ` typedesc1, typedesc2, typedesc3, typedesc4, typedesc5, typedesc6)`
     sql+= ` VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *;` 
