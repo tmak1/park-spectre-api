@@ -2,26 +2,46 @@ const express = require('express')
 const axios = require('axios')
 const cors = require('cors')
 const app = express()
+const SSEChannel = require('sse-pubsub')
 const port = 4567
 const pg = require('pg');
-const pool = new pg.Pool({ database: 'parkdev1', password: '1234', user: 'tmak' }); // connect to the database
+const pool = new pg.Pool({ database: 'parkdev1', password: '1234' }); // connect to the database
 const bodyParser = require('body-parser');
 
 app.use(cors())
 
+const channel = new SSEChannel();
+
+var data = "Hello everyone";
+
+// Say hello every second
+// setInterval(() => channel.publish( data, 'myEvent'), 5000);
+
+// app.get('/stream', (req, res) => channel.subscribe(req, res));
+
+// client side code :
+// const es = new EventSource("http://localhost:4567/sensors");
+// es.addEventListener('myEvent', ev => {
+// 	console.log(ev.data);
+// });
+
 
 app.get('/sensors', (req, res) => {
-    axios({ 
-        url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
-        method: 'get', 
-        params: { 
-            "$limit" : 500000,
-            "$$app_token" : "EVwS20Pb4HCatJGD3xccSiwbj" 
-        }
-    }).then(results => {
-        console.log(results.data);
-        res.json(results.data)
-    })
+    setInterval(() => {
+        axios({ 
+            url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
+            method: 'get', 
+            params: { 
+                "$limit" : 500000,
+                "$$app_token" : "EVwS20Pb4HCatJGD3xccSiwbj" 
+            }
+        }).then(results => {
+            // console.log(results.data);
+            // res.json(results.data)
+            channel.publish( results.data, 'myEvent')
+        })
+    }, 5000)
+    channel.subscribe(req, res);
 // count 2099
 })
 
@@ -34,7 +54,7 @@ app.get('/bays', (req, res) => {
             "$$app_token" : "EVwS20Pb4HCatJGD3xccSiwbj" 
         }
     }).then(results => {
-        console.log(results.data);
+        // console.log(results.data);
         res.json(results.data)
     })
 // count ...
@@ -49,7 +69,7 @@ app.get('/info', (req, res) => {
             "$$app_token" : "EVwS20Pb4HCatJGD3xccSiwbj" 
         }
     }).then(results => {
-        console.log(results.data);
+        // console.log(results.data);
         res.json(results.data);
     })
 // count 4589 rows
@@ -76,10 +96,10 @@ app.get('/logtodb/sensors', (req, res) => {
             ])
             .then(resultds => { 
                 //res.json({ data: resultds.rows })
-                console.log(result.bay_id);
+                // console.log(result.bay_id);
             })
         });
-        console.log(results.data.length);
+        // console.log(results.data.length);
         
     })
 
@@ -110,10 +130,10 @@ app.get('/logtodb/bays', (req, res) => {
             ])
             .then(resultds => { 
                 //res.json({ data: resultds.rows })
-                console.log(result.bay_id);
+                // console.log(result.bay_id);
             })
         });
-        console.log(results.data.length);
+        // console.log(results.data.length);
         
     })
 
@@ -152,10 +172,10 @@ app.get('/logtodb/info', (req, res) => {
             ])
             .then(resultds => { 
                 //res.json({ data: resultds.rows })
-                console.log(result.bayid);
+                // console.log(result.bayid);
             })
         });
-        console.log(results.data.length);
+        // console.log(results.data.length);
         
     })
 
