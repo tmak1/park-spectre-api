@@ -27,7 +27,7 @@ app.get('/stream', (req, res) => {
             // res.json(results.data)
             channel.publish( results.data, 'myEvent')
         })
-    }, 5000)
+    }, 60000)
     channel.subscribe(req, res);
 // count 2099
 })
@@ -79,17 +79,17 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/logtodb/sensors', (req, res) => {
-    axios({ 
-        url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
-        method: 'get', 
+    axios({
+        url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json",
+        method: 'get',
         params: {
-            "$limit": 500000, 
+            "$limit": 500000,
             "$order": "bay_id, st_marker_id",
-            "$$app_token": "EVwS20Pb4HCatJGD3xccSiwbj" 
+            "$$app_token": "EVwS20Pb4HCatJGD3xccSiwbj"
         }
-    }).then(results => {        
-        results.data.forEach(result => { 
-            sql = `INSERT INTO bay_sensors (bay_id, st_marker_id, status, lat, lon) VALUES ($1, $2, $3, $4, $5) RETURNING *;` // the RETURNING syntax shows the row that was inserted or deleted 
+    }).then(results => {
+        results.data.forEach(result => {
+            sql = `INSERT INTO bay_sensors (bay_id, st_marker_id, status, lat, lon) VALUES ($1, $2, $3, $4, $5) RETURNING *;` // the RETURNING syntax shows the row that was inserted or deleted
             pool.query(sql, [
                 result.bay_id,
                 result.st_marker_id,
@@ -97,15 +97,13 @@ app.get('/logtodb/sensors', (req, res) => {
                 result.lat,
                 result.lon
             ])
-            .then(resultds => { 
-                //res.json({ data: resultds.rows })
-                // console.log(result.bay_id);
+            .then(sqlresults => {
+                console.log(sqlresults.rows[0].bay_id);
             })
         });
         // console.log(results.data.length);
-        
+        res.json(results.data.length);
     })
-
 })
 
 app.get('/logtodb/bays', (req, res) => {
@@ -132,11 +130,11 @@ app.get('/logtodb/bays', (req, res) => {
                 result.the_geom.coordinates[0][0][0][0]
             ])
             .then(resultds => { 
-                //res.json({ data: resultds.rows })
-                // console.log(result.bay_id);
+                res.json({ data: resultds.rows })
+                console.log(result.bay_id);
             })
         });
-        // console.log(results.data.length);
+        console.log(results.data.length);
         
     })
 
@@ -174,11 +172,11 @@ app.get('/logtodb/info', (req, res) => {
                 result.typedesc6
             ])
             .then(resultds => { 
-                //res.json({ data: resultds.rows })
-                // console.log(result.bayid);
+                res.json({ data: resultds.rows })
+                console.log(result.bayid);
             })
         });
-        // console.log(results.data.length);
+        console.log(results.data.length);
         
     })
 
