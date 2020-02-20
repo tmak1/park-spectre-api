@@ -37,7 +37,6 @@ const channel = new SSEChannel();
 // })
 
 var getAllBays = () => {
-    console.log('sdfsdf')
     axios({ 
         url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
         method: 'get', 
@@ -74,7 +73,7 @@ var getAllBays = () => {
 }
 
 app.get('/stream', (req, res) => {
-    console.log('connected');
+    // console.log('connected');
     channel.subscribe(req, res);
 // count 2099
 })
