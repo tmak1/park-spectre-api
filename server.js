@@ -12,21 +12,8 @@ app.use(cors())
 
 const channel = new SSEChannel();
 
-var data = "Hello everyone";
-
-// Say hello every second
-// setInterval(() => channel.publish( data, 'myEvent'), 5000);
-
-// app.get('/stream', (req, res) => channel.subscribe(req, res));
-
-// client side code :
-// const es = new EventSource("http://localhost:4567/sensors");
-// es.addEventListener('myEvent', ev => {
-// 	console.log(ev.data);
-// });
-
-
-app.get('/sensors', (req, res) => {
+// SSE stream path
+app.get('/stream', (req, res) => {
     setInterval(() => {
         axios({ 
             url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
@@ -42,6 +29,22 @@ app.get('/sensors', (req, res) => {
         })
     }, 5000)
     channel.subscribe(req, res);
+// count 2099
+})
+
+app.get('/sensors', (req, res) => {
+    
+    axios({ 
+        url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
+        method: 'get', 
+        params: { 
+            "$limit" : 500000,
+            "$$app_token" : "EVwS20Pb4HCatJGD3xccSiwbj" 
+        }
+    }).then(results => {
+        // console.log(results.data);
+        res.json(results.data)
+    })
 // count 2099
 })
 
@@ -286,15 +289,15 @@ var mainMap = (results) => {
 
 }
 
-function GetMap() {
-    var map = new Microsoft.Maps.Map('#map', {
-        center: new Microsoft.Maps.Location(-37.818555, 144.959076),
-        zoom: 17
-    });
+// function GetMap() {
+//     var map = new Microsoft.Maps.Map('#map', {
+//         center: new Microsoft.Maps.Location(-37.818555, 144.959076),
+//         zoom: 17
+//     });
 
-    creatInfoBox(map);
-    results.forEach((result, index) => {
-        addPin(map, result, index);
-    });
+//     creatInfoBox(map);
+//     results.forEach((result, index) => {
+//         addPin(map, result, index);
+//     });
     
-} 
+// } 
