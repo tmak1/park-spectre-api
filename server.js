@@ -26,7 +26,7 @@ var data = "Hello everyone";
 // });
 
 
-app.get('/sensors', (req, res) => {
+app.get('/stream', (req, res) => {
     setInterval(() => {
         axios({ 
             url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
@@ -42,6 +42,22 @@ app.get('/sensors', (req, res) => {
         })
     }, 5000)
     channel.subscribe(req, res);
+// count 2099
+})
+
+app.get('/sensors', (req, res) => {
+    
+    axios({ 
+        url: "https://data.melbourne.vic.gov.au/resource/vh2v-4nfs.json", 
+        method: 'get', 
+        params: { 
+            "$limit" : 500000,
+            "$$app_token" : "EVwS20Pb4HCatJGD3xccSiwbj" 
+        }
+    }).then(results => {
+        // console.log(results.data);
+        res.json(results.data)
+    })
 // count 2099
 })
 
@@ -286,15 +302,15 @@ var mainMap = (results) => {
 
 }
 
-function GetMap() {
-    var map = new Microsoft.Maps.Map('#map', {
-        center: new Microsoft.Maps.Location(-37.818555, 144.959076),
-        zoom: 17
-    });
+// function GetMap() {
+//     var map = new Microsoft.Maps.Map('#map', {
+//         center: new Microsoft.Maps.Location(-37.818555, 144.959076),
+//         zoom: 17
+//     });
 
-    creatInfoBox(map);
-    results.forEach((result, index) => {
-        addPin(map, result, index);
-    });
+//     creatInfoBox(map);
+//     results.forEach((result, index) => {
+//         addPin(map, result, index);
+//     });
     
-} 
+// } 
