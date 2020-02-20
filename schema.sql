@@ -8,8 +8,11 @@ CREATE TABLE bay_sensors(
     st_marker_id VARCHAR(200),
     status VARCHAR(200),
     lat NUMERIC(25,20),
-    lon NUMERIC(25,20)
+    lon NUMERIC(25,20),
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now()
 );
+
 
 CREATE TABLE bays(
     id SERIAL PRIMARY KEY,
@@ -44,6 +47,7 @@ CREATE TABLE bay_restrictions(
 DROP TABLE IF EXISTS bay_sensors;
 DROP TABLE IF EXISTS bays;
 DROP TABLE IF EXISTS bay_restrictions;
+
 
 
 -- SELECT s.bay_id, COUNT(*)
