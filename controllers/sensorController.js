@@ -11,7 +11,10 @@ router.get('/api/sensors', (req, res) => {
 router.get('/db/sensors', (req, res) => Sensor.all().then(sqlresults => res.json(sqlresults.rows)))
 
 router.get('/populateDB/sensors', (req, res) => {
-    Axios.sensors()
+    
+    Sensor.destroy().then(sqldeleteresults => { 
+        console.log('deleted ' + sqldeleteresults.rows.length + ' rows');
+        Axios.sensors()
         .then(apiresults => {        
             apiresults.data.forEach(result => { 
                 Sensor.create(result).then(sqlresults => { 
@@ -20,6 +23,7 @@ router.get('/populateDB/sensors', (req, res) => {
             });
             res.json(apiresults.data.length + ' row(s) entered');
         })
+    }) 
 })
 
 module.exports = router

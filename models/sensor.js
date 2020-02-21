@@ -18,7 +18,7 @@ function create(params) {
 }
 
 function destroy() {
-  const sql = `DELETE FROM bay_sensors;`
+  const sql = `DELETE FROM bay_sensors RETURNING *;`
   return db.query(sql, [])
 }
 
