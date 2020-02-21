@@ -23,4 +23,4 @@ Our api is updating real time with on-street parking status so api needs to stre
 Reference-style: 
 ![alt text][logo]
 
-[logo]: https://github.com/tmak1/park-spectre-api/images/ER_Diagram.png "Logo Title Text 2"
+[logo]: https://github.com/tmak1/park-spectre-api/blob/master/images/ER_Diagram.png "Logo Title Text 2"
