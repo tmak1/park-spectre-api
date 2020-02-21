@@ -23,13 +23,16 @@ To send real-time data, we used SSE (Server Sent Event) tech from server to push
 
 <h3>3. Cool technology</h3>
 Server-Sent Events (SSE) is a server push technology enabling a client to receive automatic updates from a server via HTTP connection.<br/>
-![alt text][logo]
-
-[logo]: https://4.bp.blogspot.com/-ZQvpkvWYyhg/XLoKAGCdSpI/AAAAAAAAAV8/MFsEcdxBGC4RNWuHH9woD9TE-8SiL9AHgCLcBGAs/s1600/SSE.jpg
-Our api is updating real time with on-street parking status so api needs to stream data in regular basis to client. There are few options to solve this problem, as in websoket etc but we don't need bi-directional approach here so we used SSE.
-[I'm an inline-style link with title](https://www.google.com "Google's Homepage")
 
 Reference-style: 
 ![alt text][logo]
 
-[logo]: https://github.com/tmak1/park-spectre-api/blob/master/images/ER_Diagram.png "Logo Title Text 2"
+[logo]: https://4.bp.blogspot.com/-ZQvpkvWYyhg/XLoKAGCdSpI/AAAAAAAAAV8/MFsEcdxBGC4RNWuHH9woD9TE-8SiL9AHgCLcBGAs/s1600/SSE.jpg
+
+Our api is updating real time with on-street parking status so api needs to stream data in regular basis to client. There are few options to solve this problem, as in websoket etc but we don't need bi-directional approach here so we used SSE.
+
+
+Reference-style: 
+![alt text][logos]
+
+[logos]: https://github.com/tmak1/park-spectre-api/blob/master/images/ER_Diagram.png "Logo Title Text 2"
