@@ -5,18 +5,22 @@ app link : http://parkinspector.herokuapp.com/
 <h2>Project-3 - park-spectre-api</h2>
 The api is for supplying melbourn city street parking, real-time data.<br/>
 (Bay-id, parking availability, Time-restriction, bay-information)<br/>
-
-We used 2 melbourne city parking api : <br> <br>
-on-street sensor parking api :<br> https://data.melbourne.vic.gov.au/Transport/On-street-Parking-Bay-Sensors/vh2v-4nfs <br> 
-on-street parking restriction api :<br>  https://data.melbourne.vic.gov.au/Transport/On-street-Car-Park-Bay-Restrictions/ntht-5rk7
 <br>
 <h3>1. The challenge: </h3>
-Melbourne city provides few different open api data for car parking system. But some api has old data and parking bay number do not match with other paring bay info at times <br/>
-<br>
+This app provides users real time data of available on street parking spaces in Melbourne city. Melbourne City Council provides few different open api data for car parking system. But some api has old data and parking bay number do not match with other paring bay info at times. After some data cleaning and testing it was finally descided to link two of the open data sets that have been found to coincide correctly.<br/>
+
+
+
 <h3>2. Solution</h3>
-we had to create new database to merge all datas and create data we need for our app.<br/>
+After some testing and data cleaning, the following 2 data sets were identified to correctly provide the location, availibility, and relevant parking infomration needed to be provided to the users: 
+<br> <br>
+On-street sensor parking api :<br> https://data.melbourne.vic.gov.au/Transport/On-street-Parking-Bay-Sensors/vh2v-4nfs <br> 
+On-street parking restriction api :<br>  https://data.melbourne.vic.gov.au/Transport/On-street-Car-Park-Bay-Restrictions/ntht-5rk7
+<br>
+The api obtains updated data from the api to populate a database, merge the datasets and procide it to the client.<br/>
 To send real-time data, we used SSE (Server Sent Event) tech from server to push data to browser.
 <br>
+
 <h3>3. Cool technology</h3>
 Server-Sent Events (SSE) is a server push technology enabling a client to receive automatic updates from a server via HTTP connection.<br/>
 ![alt text][logo]
