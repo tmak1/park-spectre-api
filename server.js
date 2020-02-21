@@ -9,7 +9,7 @@ const infoSensorController = require('./controllers/infoSensorController')
 
 
 if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').load();
+    require('dotenv').config();
   }
 
 app.use(cors())
