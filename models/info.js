@@ -28,5 +28,9 @@ function create(params) {
     ])  
 }
 
+function destroy() {
+    const sql = `DELETE FROM bay_info RETURNING *;`
+    return db.query(sql, [])
+}
 
-module.exports = { all,create }
+module.exports = { all, create, destroy }
