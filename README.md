@@ -1,6 +1,9 @@
 # park-spectre-api
 
-app link : http://parkinspector.herokuapp.com/
+app live at: https://tmak1.github.io/park-spectre-client/
+app api live at : http://parkinspector.herokuapp.com/
+app client side repo: https://github.com/tmak1/park-spectre-client
+
 
 <h2>Project-3 - park-spectre-api</h2>
 The api is for supplying melbourn city street parking, real-time data.<br/>
